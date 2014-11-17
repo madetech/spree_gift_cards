@@ -3,11 +3,23 @@ require 'spec_helper'
 describe "StoreCredit" do
 
   let(:currency) { "TEST" }
-  let(:store_credit) { build(:store_credit) }
+  let(:store_credit) { build(:store_credit, store_credit_attrs) }
+  let(:store_credit_attrs) { {} }
 
 
   describe "callbacks" do
     subject { store_credit.save }
+
+    context "amount used is greater than zero" do
+      let(:store_credit) { create(:store_credit, amount: 100, amount_used: 1) }
+      subject { store_credit.destroy }
+
+      it 'can not delete the store credit' do
+        subject
+        store_credit.reload.should eq store_credit
+        store_credit.errors[:amount_used].should include(Spree.t('admin.store_credits.errors.amount_used_not_zero'))
+      end
+    end
 
     context "category is a non-expiring type" do
       let!(:secondary_credit_type) { create(:secondary_credit_type) }
@@ -240,6 +252,15 @@ describe "StoreCredit" do
       it "returns true" do
         expect(subject).to be true
       end
+    end
+
+    context 'troublesome floats' do
+      # 8.21.to_d < 8.21 => true
+      let(:store_credit_attrs) { {amount: 8.21} }
+
+      subject { store_credit.validate_authorization(store_credit_attrs[:amount], store_credit.currency) }
+
+      it { should be_truthy }
     end
   end
 
@@ -673,14 +694,6 @@ describe "StoreCredit" do
 
     context "payment is completed" do
       let(:payment_state) { "completed" }
-
-      context "credit is not owed on the order" do
-        before { payment.order.stub(payment_state: 'paid') }
-
-        it "returns false" do
-          expect(subject).to be false
-        end
-      end
 
       context "credit is owed on the order" do
         before { payment.order.stub(payment_state: 'credit_owed') }

@@ -1,12 +1,18 @@
 module SpreeStoreCredits::OrderDecorator
-  def self.included(base)
-    base.state_machine.before_transition to: :confirm, do: :add_store_credit_payments
-    base.state_machine.after_transition to: :confirm, do: :create_gift_cards
+  extend ActiveSupport::Concern
 
-    base.prepend(InstanceMethods)
+  included do
+    Spree::Order.state_machine.before_transition to: :confirm, do: :add_store_credit_payments
+
+    prepend(InstanceMethods)
   end
 
   module InstanceMethods
+    def finalize!
+      create_gift_cards
+      super
+    end
+
     def create_gift_cards
       line_items.each do |item|
         item.quantity.times do
@@ -37,7 +43,7 @@ module SpreeStoreCredits::OrderDecorator
       reconcile_with_credit_card(existing_credit_card_payment, remaining_total)
 
       if payments.valid.sum(:amount) != total
-        errors.add(:base, Spree.t("store_credits.errors.unable_to_fund")) and return false
+        errors.add(:base, Spree.t("store_credit.errors.unable_to_fund")) and return false
       end
     end
 

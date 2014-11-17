@@ -87,7 +87,7 @@ describe "Order" do
       context "there are no other payments" do
         it "adds an error to the model" do
           expect(subject).to be false
-          order.errors.full_messages.should include(Spree.t("store_credits.errors.unable_to_fund"))
+          order.errors.full_messages.should include(Spree.t("store_credit.errors.unable_to_fund"))
         end
       end
 
@@ -146,7 +146,7 @@ describe "Order" do
       context "there are no other payments" do
         it "adds an error to the model" do
           expect(subject).to be false
-          order.errors.full_messages.should include(Spree.t("store_credits.errors.unable_to_fund"))
+          order.errors.full_messages.should include(Spree.t("store_credit.errors.unable_to_fund"))
         end
       end
 
@@ -288,6 +288,19 @@ describe "Order" do
 
       it "returns the order total" do
         subject.order_total_after_store_credit.should eq order_total
+      end
+    end
+  end
+
+  describe "#finalize!" do
+    context "the order contains gift cards and transitions to complete" do
+      let(:order) { create(:order_with_line_items, state: 'complete') }
+
+      subject { order.finalize! }
+
+      it "calls #create_gift_cards" do
+        order.should_receive(:create_gift_cards)
+        subject
       end
     end
   end

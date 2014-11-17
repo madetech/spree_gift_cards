@@ -8,13 +8,15 @@ class Spree::StoreCredit < ActiveRecord::Base
   AUTHORIZE_ACTION  = 'authorize'
   ALLOCATION_ACTION = 'allocation'
 
+  DEFAULT_CREATED_BY_EMAIL = "spree@example.com"
+
   belongs_to :user
   belongs_to :category, class_name: "Spree::StoreCreditCategory"
   belongs_to :created_by, class_name: "Spree::User"
   belongs_to :credit_type, class_name: 'Spree::StoreCreditType', :foreign_key => 'type_id'
   has_many :store_credit_events
 
-  validates_presence_of :user_id, :category_id, :type_id, :created_by_id
+  validates_presence_of :user_id, :category_id, :type_id, :created_by_id, :currency
   validates_numericality_of :amount, { greater_than: 0 }
   validates_numericality_of :amount_used, { greater_than_or_equal_to: 0 }
   validate :amount_used_less_than_or_equal_to_amount
@@ -27,6 +29,7 @@ class Spree::StoreCredit < ActiveRecord::Base
 
   before_validation :associate_credit_type
   after_save :store_event
+  before_destroy :validate_no_amount_used
 
   attr_accessor :action, :action_amount, :action_originator, :action_authorization_code
 
@@ -70,7 +73,7 @@ class Spree::StoreCredit < ActiveRecord::Base
   end
 
   def validate_authorization(amount, order_currency)
-    if amount_remaining < amount
+    if amount_remaining.to_d < amount.to_d
       errors.add(:base, Spree.t('store_credit_payment_method.insufficient_funds'))
     elsif currency != order_currency
       errors.add(:base, Spree.t('store_credit_payment_method.currency_mismatch'))
@@ -155,13 +158,17 @@ class Spree::StoreCredit < ActiveRecord::Base
   end
 
   def can_credit?(payment)
-    return false unless payment.completed?
-    return false unless payment.order.payment_state == 'credit_owed'
-    payment.credit_allowed > 0
+    payment.completed? && payment.credit_allowed > 0
   end
 
   def generate_authorization_code
     "#{self.id}-SC-#{Time.now.utc.strftime("%Y%m%d%H%M%S%6N")}"
+  end
+
+  class << self
+    def default_created_by
+      Spree.user_class.find_by(email: DEFAULT_CREATED_BY_EMAIL)
+    end
   end
 
   private
@@ -220,6 +227,12 @@ class Spree::StoreCredit < ActiveRecord::Base
   def amount_authorized_less_than_or_equal_to_amount
     if (amount_used + amount_authorized) > amount
       errors.add(:amount_authorized, Spree.t('admin.store_credits.errors.amount_authorized_exceeds_total_credit'))
+    end
+  end
+
+  def validate_no_amount_used
+    if amount_used > 0
+      errors.add(:amount_used, 'is greater than zero. Can not delete store credit')
     end
   end
 
