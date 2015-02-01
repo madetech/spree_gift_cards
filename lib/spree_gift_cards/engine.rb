@@ -2,7 +2,7 @@ module SpreeStoreCredits
   class Engine < Rails::Engine
     require 'spree/core'
     isolate_namespace Spree
-    engine_name 'spree_store_credits'
+    engine_name 'spree_gift_cards'
 
     # use rspec for tests
     config.generators do |g|

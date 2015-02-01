@@ -34,8 +34,8 @@ require 'spree/api/testing_support/caching'
 require 'spree/api/testing_support/helpers'
 require 'spree/api/testing_support/setup'
 
-# Requires factories defined in lib/spree_store_credits/factories.rb
-require 'spree_store_credits/factories'
+# Requires factories defined in lib/spree_gift_cards/factories.rb
+require 'spree_gift_cards/factories'
 
 RSpec.configure do |config|
   config.infer_spec_type_from_file_location!

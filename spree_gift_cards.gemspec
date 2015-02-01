@@ -1,10 +1,10 @@
 # encoding: UTF-8
 Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
-  s.name        = 'spree_store_credits'
+  s.name        = 'spree_gift_cards'
   s.version     = '2.4.0.beta'
-  s.summary     = 'Store credit as a payment method'
-  s.description = 'Enables associating store credit to a user and using the store credit as a form of payment during checkout.'
+  s.summary     = 'Gift Cards'
+  s.description = 'Allows redeeming a gift card for Store Credit on the user\'s account'
   s.required_ruby_version = '>= 2.1.0'
 
   s.author    = 'Bonobos'
@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.require_path = 'lib'
   s.requirements << 'none'
 
-  s.add_dependency 'spree', '2.4.0.rc4'
+  s.add_dependency 'spree', '2.4.1.beta'
 
   s.add_development_dependency 'capybara'
   s.add_development_dependency 'coffee-rails'
