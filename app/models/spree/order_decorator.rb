@@ -1,4 +1,4 @@
-module SpreeStoreCredits::OrderDecorator
+module SpreeGiftCards::OrderDecorator
   extend ActiveSupport::Concern
 
   included do
@@ -21,4 +21,4 @@ module SpreeStoreCredits::OrderDecorator
   end
 end
 
-Spree::Order.include SpreeStoreCredits::OrderDecorator
+Spree::Order.include(SpreeGiftCards::OrderDecorator)

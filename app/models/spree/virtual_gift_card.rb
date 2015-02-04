@@ -21,7 +21,7 @@ class Spree::VirtualGiftCard < ActiveRecord::Base
 
   def redeem(redeemer)
     return false if redeemed?
-    create_store_credit!({
+    create_store_credit!(
       amount: amount,
       currency: currency,
       memo: memo,
@@ -29,8 +29,9 @@ class Spree::VirtualGiftCard < ActiveRecord::Base
       created_by: redeemer,
       action_originator: self,
       category: store_credit_category,
-    })
-    self.update_attributes( redeemed_at: Time.now, redeemer: redeemer )
+      type: Spree::StoreCreditType.where(name: 'Non-Expiring').first_or_create!
+    )
+    self.update_attributes(redeemed_at: Time.now, redeemer: redeemer)
   end
 
   def memo
