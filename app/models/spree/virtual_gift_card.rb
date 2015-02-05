@@ -29,7 +29,7 @@ class Spree::VirtualGiftCard < ActiveRecord::Base
       created_by: redeemer,
       action_originator: self,
       category: store_credit_category,
-      type: Spree::StoreCreditType.where(name: 'Non-Expiring').first_or_create!
+      type_id: Spree::StoreCreditType.where(name: 'Non-Expiring').first_or_create!.id
     )
     self.update_attributes(redeemed_at: Time.now, redeemer: redeemer)
   end
