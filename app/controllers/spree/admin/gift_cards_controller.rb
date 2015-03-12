@@ -3,22 +3,19 @@ class Spree::Admin::GiftCardsController < Spree::Admin::BaseController
   before_filter :load_user, only: [:lookup, :redeem]
   before_filter :load_gift_card_for_redemption, only: [:redeem]
 
-  def index
-  end
+  def index; end
 
-  def show
-  end
+  def show; end
 
-  def lookup
-  end
+  def lookup; end
 
   def redeem
     if @gift_card.redeem(@user)
-      flash[:success] = Spree.t("admin.gift_cards.redeemed_gift_card")
-      redirect_to admin_user_store_credits_path(@user)
+      redirect_to admin_user_store_credits_path(@user),
+        succes: Spree.t("admin.gift_cards.redeemed_gift_card")
     else
-      flash[:error] = Spree.t("admin.gift_cards.errors.unable_to_redeem_gift_card")
-      render :lookup
+      redirect_to lookup_admin_user_gift_cards_path(@user),
+        error: Spree.t("admin.gift_cards.errors.unable_to_redeem_gift_card")
     end
   end
 
