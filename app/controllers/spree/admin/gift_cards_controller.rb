@@ -3,14 +3,11 @@ class Spree::Admin::GiftCardsController < Spree::Admin::BaseController
   before_filter :load_user, only: [:lookup, :redeem]
   before_filter :load_gift_card_for_redemption, only: [:redeem]
 
-  def index
-  end
+  def index; end
 
-  def show
-  end
+  def show; end
 
-  def lookup
-  end
+  def lookup; end
 
   def redeem
     if @gift_card.redeem(@user)
