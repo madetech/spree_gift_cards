@@ -3,6 +3,7 @@
 <% end %>
 
 <%= render :partial => 'spree/admin/users/sidebar', :locals => { :current => :gift_cards } %>
+
 <% content_for :page_actions do %>
   <li><%= link_to_with_icon 'arrow-left', Spree.t("admin.store_credits.back_to_user_list"), admin_users_path, class: 'button' %></li>
 <% end %>
