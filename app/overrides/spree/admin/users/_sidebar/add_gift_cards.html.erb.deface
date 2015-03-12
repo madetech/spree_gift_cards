@@ -1,0 +1,5 @@
+<!-- insert_bottom "[data-hook='admin_user_tab_options']" -->
+
+<li<%== ' class="active"' if current == :gift_cards %>>
+  <%= link_to_with_icon 'gift', Spree.t(:gift_cards), spree.lookup_admin_user_gift_cards_path(@user) %>
+</li>
