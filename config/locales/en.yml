@@ -3,6 +3,7 @@
 
 en:
   spree:
+    lookup_gift_card: "Lookup Gift Card"
     admin:
       gift_cards:
         gift_card: "Gift Card"
