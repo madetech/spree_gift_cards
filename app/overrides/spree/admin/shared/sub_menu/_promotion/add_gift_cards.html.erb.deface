@@ -1,0 +1,3 @@
+<!-- insert_bottom "#sidebar-promotions" -->
+
+<%= tab :gift_cards if can? :manage, Spree::VirtualGiftCard %>
