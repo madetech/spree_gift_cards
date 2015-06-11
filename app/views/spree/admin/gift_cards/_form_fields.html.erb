@@ -1,0 +1,19 @@
+<fieldset data-hook="new_gift_card">
+
+  <%= f.hidden_field :purchaser_id, value: spree_current_user.id %>
+
+  <%= f.field_container :amount, class: ['form-group'] do %>
+    <%= f.label :amount, Spree.t(:amount) %> <span class="required">*</span>
+    <%= f.number_field :amount, min: 0, step: 0.01, class: 'form-control title' %>
+    <%= f.error_message_on :amount %>
+  <% end %>
+
+  <%= f.field_container :currency, class: ['form-group'] do %>
+    <%= f.label :currency, Spree.t(:currency) %> <span class="required">*</span>
+    <%= f.collection_select :currency, gift_card_currencies, :first, :last, class: 'select2' %>
+    <%= f.error_message_on :currency %>
+  <% end %>
+
+  <%= render partial: 'spree/admin/shared/new_resource_links' %>
+
+</fieldset>

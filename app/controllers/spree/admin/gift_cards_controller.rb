@@ -3,6 +3,32 @@ class Spree::Admin::GiftCardsController < Spree::Admin::BaseController
   before_filter :load_user, only: [:lookup, :redeem]
   before_filter :load_gift_card_for_redemption, only: [:redeem]
 
+  helper_method :gift_card_currencies, :collection_url
+
+  def new
+    @gift_card = Spree::VirtualGiftCard.new
+  end
+
+  def create
+    p = params[:virtual_gift_card]
+    if p[:purchaser_id] && p[:amount] && p[:currency]
+      @gift_card = Spree::VirtualGiftCard.create(purchaser_id: p[:purchaser_id],
+                                    amount: p[:amount],
+                                    currency: p[:currency])
+
+      if @gift_card.valid?
+        flash[:notice] = Spree.t(:gift_card_created, code: @gift_card.redemption_code)
+      else
+        flash[:error] = Spree.t(:gift_card_creation_errors)
+      end
+    else
+      flash[:error] = Spree.t(:gift_card_creation_incomplete)
+      redirect_to :back and return
+    end
+
+    redirect_to admin_gift_cards_path
+  end
+
   def index; end
 
   def show; end
@@ -17,6 +43,24 @@ class Spree::Admin::GiftCardsController < Spree::Admin::BaseController
       redirect_to lookup_admin_user_gift_cards_path(@user),
         error: Spree.t("admin.gift_cards.errors.unable_to_redeem_gift_card")
     end
+  end
+
+  def gift_card_currencies
+    @currencies ||= Spree::Store
+                      .all
+                      .flat_map do |store|
+                        store.supported_currencies.map do |currency|
+                          display = ::Money::Currency.find(currency).try(:name)
+                          value   = currency.upcase
+                          [value, display]
+                        end
+                      end
+                      .uniq
+                      .sort_by(&:last)
+  end
+
+  def collection_url
+    admin_gift_cards_path
   end
 
   private
