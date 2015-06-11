@@ -15,3 +15,7 @@ en:
           not_found: "Gift card was not found"
           please_try_again: "Please try again"
           unable_to_redeem_gift_card: "Unable to redeem gift card"
+    gift_card_created: "Gift Card created with redemption code '%{code}'"
+    gift_card_creation_errors: "There were errors creating the Gift Card"
+    gift_card_creation_incomplete: "There was information missing. Failed to create the Gift Card"
+    new_gift_card: "New Gift Card"

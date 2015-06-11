@@ -2,4 +2,9 @@
   <%= Spree.t(:gift_cards) %>
 <% end %>
 
+<% content_for :page_actions do %>
+  <%= button_link_to Spree.t(:new_gift_card), new_admin_gift_card_path,
+                     class: "btn-success", icon: 'add', id: 'admin_new_gift_card' %>
+<% end if can?(:create, Spree::VirtualGiftCard) %>
+
 <%= render partial: 'lookup_form' %>
