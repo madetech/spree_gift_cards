@@ -47,7 +47,7 @@ class Spree::VirtualGiftCard < ActiveRecord::Base
   end
 
   def store_credit_category
-    Spree::StoreCreditCategory.where(name: Spree::StoreCreditCategory::GIFT_CARD_CATEGORY_NAME).first
+    Spree::StoreCreditCategory.where(name: Spree::StoreCreditCategory::GIFT_CARD_CATEGORY_NAME).first_or_create
   end
 
   def self.active_by_redemption_code(redemption_code)
